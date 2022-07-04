@@ -24,6 +24,9 @@ def image_puller():
         return jsonify(success=False, error="Missing parameters"), 400
 
     image = request.form['image']
+    hostname = request.form['hostname']
+
+    print(hostname)
 
     if request.form['token'] != os.environ['TOKEN']:
         return jsonify(success=False, error="Invalid token"), 403
@@ -55,7 +58,7 @@ def image_puller():
         if 'HOSTNAME' in os.environ and os.environ['HOSTNAME'] == container.attrs['Id']:
             return jsonify(success=False, error="You can't restart the container where the puller script is running"), 403
 
-        new_cont = docker.APIClient().create_container(container.attrs['Config']['Image'], environment=container.attrs['Config']['Env'], host_config=container.attrs['HostConfig'])
+        new_cont = docker.APIClient().create_container(container.attrs['Config']['Image'],hostname=hostname,  environment=container.attrs['Config']['Env'], host_config=container.attrs['HostConfig'])
         
         new_containers.append(client.containers.get(new_cont['Id']))
 
